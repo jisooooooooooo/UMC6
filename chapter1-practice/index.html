@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h2 id="number">0</h2>
+    <button id="increase">+1</button>
+    <button id="decrease">-1</button>
+    <script>
+      const a = document.getElementById("number");
+      const b = document.getElementById("increase");
+      const c = document.getElementById("decrease");
+
+      const increaseHandler = () => {
+        a.innerText++;
+      };
+      b.addEventListener("click", increaseHandler);
+
+      const decreaseHandler = () => {
+        a.innerText--;
+      };
+      c.addEventListener("click", decreaseHandler);
+    </script>
+  </body>
+</html>
