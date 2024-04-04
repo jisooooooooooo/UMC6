@@ -1,0 +1,77 @@
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #ecf0f6;
+}
+
+.container {
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 120px;
+}
+.input-wrapper {
+  border-top: 2px solid #dce4eb;
+  padding: 15px;
+  width: 780px;
+}
+input:focus {
+  border: 1px solid blue;
+}
+
+input {
+  width: 600px;
+  padding: 10px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  border: 1px solid rgb(0, 0, 0);
+  background-color: white;
+}
+
+.list-wrapper {
+  display: flex;
+  flex: 1;
+}
+
+.work-list,
+.success-list {
+  flex: 1;
+  width: 100px;
+  margin: 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.work,
+.success {
+  display: inline-block;
+  padding-bottom: 2px;
+  border-bottom: 2px solid #dce4eb;
+  margin-bottom: 40px;
+}
+.work-list .item,
+.success-list .item {
+  margin-bottom: 10px;
+  padding: 10px;
+  width: 200px;
+  border-bottom: 2px solid #dce4eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.work-list button,
+.success-list button {
+  margin-left: 100px;
+  background-color: #dce4eb;
+  border: none;
+  font-weight: 300;
+  width: 50px;
+  height: 25px;
+  font-weight: bold;
+}
