@@ -1,0 +1,42 @@
+.container {
+  display: flex;
+}
+.box {
+  position: relative;
+  background-color: #373b6a;
+  height: 370px;
+  color: white;
+  margin: 10px;
+  width: calc(100% / 8 - 20px);
+  box-sizing: border-box;
+}
+
+.img {
+  width: 100%;
+  height: 280px;
+}
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.736);
+  color: white;
+  opacity: 0;
+  font-size: 12px;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+.overlaytitle {
+  margin-bottom: 10px;
+}
+.box:hover .overlay {
+  opacity: 1;
+}
