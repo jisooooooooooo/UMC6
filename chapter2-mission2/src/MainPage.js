@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Top = styled.div`
   background-color: black;
-  height: 350px;
+  height: 400px;
   color: white;
   font-size: 30px;
   font-weight: bold;
@@ -12,7 +12,7 @@ const Top = styled.div`
   align-items: center;
 `;
 const Bottom = styled.div`
-  height: 400px;
+  height: 500px;
   display: flex;
   justify-content: center;
   color: white;

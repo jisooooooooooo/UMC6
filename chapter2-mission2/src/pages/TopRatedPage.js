@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import LoadingSpinner from "../LoadingSpinner";
 
 const Container = styled.div`
   background-color: #1f1f43;
@@ -58,6 +59,7 @@ const Overtitle = styled.div`
 
 const TopRatedPage = () => {
   const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -75,8 +77,10 @@ const TopRatedPage = () => {
         );
         const data = await response.json();
         setMovies(data.results || []);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data: ", error);
+        setLoading(false);
       }
     };
     fetchData();
@@ -84,7 +88,9 @@ const TopRatedPage = () => {
 
   return (
     <Container>
-      {movies
+      {loading ? (
+        <LoadingSpinner /> 
+      ) : (movies
         .reduce((rows, movie, index) => {
           if (index % 8 === 0) rows.push([]);
           rows[rows.length - 1].push(
@@ -109,9 +115,8 @@ const TopRatedPage = () => {
           );
           return rows;
         }, [])
-        .map((row, index) => (
-          <Row key={index}>{row}</Row>
-        ))}
+        .map((row, index) => <Row key={index}>{row}</Row>)
+    )}
     </Container>
   );
 };

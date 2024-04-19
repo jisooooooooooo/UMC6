@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import LoadingSpinner from "../LoadingSpinner";
 
 const Container = styled.div`
   background-color: #1f1f43;
@@ -59,6 +60,7 @@ const Overtitle = styled.div`
 
 const UpComing = () => {
   const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,8 +78,10 @@ const UpComing = () => {
         );
         const data = await response.json();
         setMovies(data.results || []);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data: ", error);
+        setLoading(false);
       }
     };
     fetchData();
@@ -85,34 +89,36 @@ const UpComing = () => {
 
   return (
     <Container>
-      {movies
-        .reduce((rows, movie, index) => {
-          if (index % 8 === 0) rows.push([]);
-          rows[rows.length - 1].push(
-            <Box key={movie.id}>
-              <Img
-                src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
-                alt="movieimg"
-              />
-              <Bottom>
-                <div>{movie.title}</div>
-                <div>⭐ {movie.vote_average}</div>
-              </Bottom>
-              <Overlay>
-                <Overtitle>{movie.title}</Overtitle>
-                <div>
-                  {movie.overview.length > 100
-                    ? `${movie.overview.substring(0, 100)}...`
-                    : movie.overview}
-                </div>
-              </Overlay>
-            </Box>
-          );
-          return rows;
-        }, [])
-        .map((row, index) => (
-          <Row key={index}>{row}</Row>
-        ))}
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        movies
+          .reduce((rows, movie, index) => {
+            if (index % 8 === 0) rows.push([]);
+            rows[rows.length - 1].push(
+              <Box key={movie.id}>
+                <Img
+                  src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+                  alt="movieimg"
+                />
+                <Bottom>
+                  <div>{movie.title}</div>
+                  <div>⭐ {movie.vote_average}</div>
+                </Bottom>
+                <Overlay>
+                  <Overtitle>{movie.title}</Overtitle>
+                  <div>
+                    {movie.overview.length > 100
+                      ? `${movie.overview.substring(0, 100)}...`
+                      : movie.overview}
+                  </div>
+                </Overlay>
+              </Box>
+            );
+            return rows;
+          }, [])
+          .map((row, index) => <Row key={index}>{row}</Row>)
+      )}
     </Container>
   );
 };
