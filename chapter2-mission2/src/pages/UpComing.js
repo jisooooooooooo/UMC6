@@ -32,6 +32,7 @@ const Bottom = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 10px;
+  font-size: 13px;
 `;
 
 const Overlay = styled.div`
@@ -56,14 +57,14 @@ const Overtitle = styled.div`
   margin-bottom: 10px;
 `;
 
-const Movie = () => {
+const UpComing = () => {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1",
+          "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1",
           {
             method: "GET",
             headers: {
@@ -95,7 +96,7 @@ const Movie = () => {
               />
               <Bottom>
                 <div>{movie.title}</div>
-                <div>{movie.vote_average}</div>
+                <div>⭐ {movie.vote_average}</div>
               </Bottom>
               <Overlay>
                 <Overtitle>{movie.title}</Overtitle>
@@ -116,4 +117,4 @@ const Movie = () => {
   );
 };
 
-export default Movie;
+export default UpComing;

@@ -56,14 +56,14 @@ const Overtitle = styled.div`
   margin-bottom: 10px;
 `;
 
-const Movie = () => {
+const PopularPage = () => {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1",
+          "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
           {
             method: "GET",
             headers: {
@@ -116,4 +116,4 @@ const Movie = () => {
   );
 };
 
-export default Movie;
+export default PopularPage;

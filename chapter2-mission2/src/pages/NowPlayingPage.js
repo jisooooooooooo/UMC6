@@ -56,7 +56,7 @@ const Overtitle = styled.div`
   margin-bottom: 10px;
 `;
 
-const Movie = () => {
+const NowPlayingPage = () => {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
@@ -116,4 +116,4 @@ const Movie = () => {
   );
 };
 
-export default Movie;
+export default NowPlayingPage;
