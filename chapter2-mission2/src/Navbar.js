@@ -1,3 +1,4 @@
+import { useState } from "react";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -27,27 +28,33 @@ const NavRightList = styled(Link)`
   text-decoration: none;
   &:hover {
     font-size: 20px;
+    color: #ffd700;
+    font-weight: bold;
   }
 `;
-const Upcoming = styled(Link)`
+const NavSignup = styled(Link)`
+  font-size: 20px;
   color: #ffd700;
   font-weight: bold;
-  margin-left: 20px;
   text-decoration: none;
-  &:hover {
-    font-size: 20px;
-  }
 `;
 const Navbar = () => {
+  const [isLoggedIn, setLoggedIn] = useState("로그인");
+
+  const loginHandler = () => {
+    setLoggedIn((prev) => !prev);
+  };
   return (
     <Nav>
       <Title to="/">UMC Movie</Title>
       <NavRight>
-        <NavRightList to="/signup">회원가입</NavRightList>
+        <NavSignup to="/signup" onClick={loginHandler}>
+          {isLoggedIn ? "로그아웃" : "로그인"}
+        </NavSignup>
         <NavRightList to="/popular">Popular</NavRightList>
         <NavRightList to="/nowplaying">Now Playing</NavRightList>
         <NavRightList to="/toprated">Top Rated</NavRightList>
-        <Upcoming to="/upcoming">Upcoming</Upcoming>
+        <NavRightList to="/upcoming">Upcoming</NavRightList>
       </NavRight>
     </Nav>
   );

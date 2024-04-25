@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import LoadingSpinner from "../LoadingSpinner";
-
+import { Link } from "react-router-dom";
 const Container = styled.div`
   background-color: #1f1f43;
 `;
@@ -11,7 +11,7 @@ const Row = styled.div`
   margin-bottom: 20px;
 `;
 
-const Box = styled.div`
+const Box = styled(Link)`
   position: relative;
   background-color: #373b6a;
   height: 370px;
@@ -89,13 +89,13 @@ const PopularPage = () => {
   return (
     <Container>
       {loading ? (
-        <LoadingSpinner /> 
+        <LoadingSpinner />
       ) : (
         movies
           .reduce((rows, movie, index) => {
             if (index % 8 === 0) rows.push([]);
             rows[rows.length - 1].push(
-              <Box key={movie.id}>
+              <Box key={movie.id} to={`/popular/movie/${movie.title}`}>
                 <Img
                   src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
                   alt="movieimg"
