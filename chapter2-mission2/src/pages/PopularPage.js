@@ -18,6 +18,7 @@ const Box = styled(Link)`
   color: white;
   margin: 10px;
   width: calc(100% / 8 - 20px);
+  text-decoration: none;
   box-sizing: border-box;
   &:hover {
     opacity: 1;

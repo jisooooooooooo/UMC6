@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-const Container = styled.div``;
+
 const Box = styled.div`
   padding: 0 200px;
-
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -38,7 +37,7 @@ const Star = styled.span`
 `;
 const renderStars = (rating) => {
   const stars = [];
-  const filledStars = Math.floor(rating); // 평점을 2로 나눈 몫만큼 별표 생성
+  const filledStars = Math.floor(rating);
   for (let i = 0; i < filledStars; i++) {
     stars.push(<Star key={i}>⭐️</Star>);
   }
@@ -47,13 +46,12 @@ const renderStars = (rating) => {
 
 const MovieDetail = () => {
   const [movie, setMovie] = useState(null);
-  const { title } = useParams();
-
+  const { category, title } = useParams();
   useEffect(() => {
     const fetchMovieDetail = async () => {
       try {
         const response = await fetch(
-          `https://api.themoviedb.org/3/movie/popular?language=en-US&page=1`,
+          `https://api.themoviedb.org/3/movie/${category}?language=en-US&page=1`,
           {
             method: "GET",
             headers: {
@@ -74,14 +72,14 @@ const MovieDetail = () => {
     };
 
     fetchMovieDetail();
-  }, [title]);
+  }, [category, title]);
 
-  const overviewText = movie.overview
-    ? movie.overview
-    : "줄거리 정보가 없습니다.";
+  if (!movie) {
+    return null;
+  }
 
   return (
-    <Container>
+    <div>
       <Box>
         <MovieImg
           src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
@@ -92,10 +90,14 @@ const MovieDetail = () => {
           <MovieContent>평점 {renderStars(movie.vote_average)}</MovieContent>
           <MovieContent>개봉일 {movie.release_date}</MovieContent>
           <MovieContent>줄거리</MovieContent>
-          <MovieOverview>{overviewText}</MovieOverview>
+          <MovieOverview>
+            {movie.overview
+              ? movie.overview
+              : "TMDB에서 제공하는 API에 상세 줄거리 정보가 없습니다."}
+          </MovieOverview>
         </ContentBox>
       </Box>
-    </Container>
+    </div>
   );
 };
 
