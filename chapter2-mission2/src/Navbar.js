@@ -1,4 +1,3 @@
-import { useState } from "react";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -39,18 +38,19 @@ const NavSignup = styled(Link)`
   text-decoration: none;
 `;
 const Navbar = () => {
-  const [isLoggedIn, setLoggedIn] = useState("로그인");
+  // const [isLoggedIn, setLoggedIn] = useState("로그인");
 
-  const loginHandler = () => {
-    setLoggedIn((prev) => !prev);
-  };
+  // const loginHandler = () => {
+  //   setLoggedIn((prev) => !prev);
+  // };
   return (
     <Nav>
       <Title to="/">UMC Movie</Title>
       <NavRight>
-        <NavSignup to="/signup" onClick={loginHandler}>
-          {isLoggedIn ? "로그아웃" : "로그인"}
-        </NavSignup>
+        {/* <NavSignup to="/signup" onClick={loginHandler}> */}
+          {/* {isLoggedIn ? "로그아웃" : "로그인"} */}
+        {/* </NavSignup> */}
+        <NavSignup to="/signup">회원가입</NavSignup>
         <NavRightList to="/popular">Popular</NavRightList>
         <NavRightList to="/nowplaying">Now Playing</NavRightList>
         <NavRightList to="/toprated">Top Rated</NavRightList>

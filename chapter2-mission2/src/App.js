@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import MainPage from "./MainPage";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 import PopularPage from "./pages/PopularPage";
 import NowPlayingPage from "./pages/NowPlayingPage";
 import TopRatedPage from "./pages/TopRatedPage";
@@ -17,6 +19,9 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<MainPage />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+
           <Route path="/popular" element={<PopularPage />} />
           <Route path="/nowplaying" element={<NowPlayingPage />} />
           <Route path="/toprated" element={<TopRatedPage />} />
