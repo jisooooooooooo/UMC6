@@ -103,7 +103,7 @@ const NowPlayingPage = () => {
                 />
                 <Bottom>
                   <div>{movie.title}</div>
-                  <div>{movie.vote_average}</div>
+                  <div>⭐ {movie.vote_average}</div>
                 </Bottom>
                 <Overlay>
                   <Overtitle>{movie.title}</Overtitle>

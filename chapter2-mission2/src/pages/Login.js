@@ -50,7 +50,7 @@ const Login = () => {
 
         <Input type="password" placeholder="비밀번호" />
 
-        <Button type="submit">제출하기</Button>
+        <Button type="submit">로그인</Button>
       </Form>
     </Container>
   );
