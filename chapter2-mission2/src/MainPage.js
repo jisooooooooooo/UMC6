@@ -128,9 +128,20 @@ const Overtitle = styled.div`
 const MainPage = () => {
   const [loading, setLoading] = useState(false);
   const [searchMovies, setSearchMovies] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debounceTimer, setDebounceTimer] = useState(null);
 
-  // 검색 함수
-  const searchMoviesHandler = async (query) => {
+  // 디바운스를 적용
+  const searchMoviesHandler = (query) => {
+    setSearchTerm(query);
+    clearTimeout(debounceTimer);
+    const timer = setTimeout(() => {
+      fetchMovies(query);
+    }, 500); // 500ms 후에 검색
+    setDebounceTimer(timer);
+  };
+
+  const fetchMovies = async (query) => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -161,6 +172,7 @@ const MainPage = () => {
           <Search>
             <BottomInput
               type="text"
+              value={searchTerm}
               onChange={(e) => searchMoviesHandler(e.target.value)}
             />
             <div>🔍</div>
