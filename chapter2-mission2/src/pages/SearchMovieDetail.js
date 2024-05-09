@@ -38,6 +38,37 @@ const Star = styled.span`
 const PersonBox = styled.div`
   color: white;
   background-color: #1f1f43;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 100px;
+`;
+const PersonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 10px 15px;
+`;
+const PersonBoxTitle = styled.div`
+  font-weight: bold;
+  font-size: 25px;
+  margin-bottom: 30px;
+`;
+const PersonImg = styled.img`
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  
+`;
+const PersonName = styled.div`
+  font-weight: bold;
+  text-align: center;
+  margin-top: 5px;
+`;
+const PersonRole = styled.div`
+  text-align: center;
 `;
 const renderStars = (rating) => {
   const stars = [];
@@ -76,9 +107,37 @@ const SearchMovieDetail = () => {
     fetchMovieDetail();
   }, [id]);
 
-  if (!movie) {
+  const [credits, setCredits] = useState(null);
+  useEffect(() => {
+    const fetchCredits = async () => {
+      try {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/movie/${id}/credits?language=en-US`,
+          {
+            method: "GET",
+            headers: {
+              accept: "application/json",
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlNzVlYzI3ZjgzODQwODFhZjVlNGYxYWJhMjcyZGI4OCIsInN1YiI6IjY2MjFkNmQyY2NkZTA0MDE4ODA2NGIwYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.9p6u7J4co7Lgu_v1SGf9S-NAJSPjBsEaCsv9elKP1n0",
+            },
+          }
+        );
+        const data = await response.json();
+        console.log(data);
+        setCredits(data);
+      } catch (error) {
+        console.error("Error fetching credits: ", error);
+      }
+    };
+
+    fetchCredits();
+  }, [id]);
+
+  if (!movie || !credits) {
     return null;
   }
+  const noImageSrc =
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSz7ztleRwzXhFdiwBYqZ8cib9RvEsukVVUS3niN1YQ&s";
 
   return (
     <div>
@@ -100,7 +159,43 @@ const SearchMovieDetail = () => {
         </ContentBox>
       </Box>
       <PersonBox>
-        <div>출연진 및 제작진</div>
+        <PersonBoxTitle>출연진 및 제작진</PersonBoxTitle>
+        <div style={{ display: "flex", flexWrap: "wrap" }}>
+          {credits.cast.slice(0, 10).map((person) => (
+            <PersonContainer key={person.id}>
+              <PersonImg
+                src={
+                  person.profile_path
+                    ? `https://image.tmdb.org/t/p/w500/${person.profile_path}`
+                    : noImageSrc
+                }
+                alt={`${person.name} profile`}
+              />
+              <div>
+                <PersonName>{person.name}</PersonName>
+                <PersonRole>{person.known_for_department}</PersonRole>
+              </div>
+            </PersonContainer>
+          ))}
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap" }}>
+          {credits.crew.slice(0, 10).map((person) => (
+            <PersonContainer key={person.id}>
+              <PersonImg
+                src={
+                  person.profile_path
+                    ? `https://image.tmdb.org/t/p/w500/${person.profile_path}`
+                    : noImageSrc
+                }
+                alt={`${person.name} profile`}
+              />
+              <div>
+                <PersonName>{person.name}</PersonName>
+                <PersonRole>{person.known_for_department}</PersonRole>
+              </div>
+            </PersonContainer>
+          ))}
+        </div>
       </PersonBox>
     </div>
   );
