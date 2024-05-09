@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import LoadingSpinner from "./LoadingSpinner";
 import { Link } from "react-router-dom";
 
 const Top = styled.div`
@@ -126,9 +125,11 @@ const Overtitle = styled.div`
   margin-bottom: 10px;
 `;
 const MainPage = () => {
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const [searchMovies, setSearchMovies] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [debounceTimer, setDebounceTimer] = useState(null);
 
   // 디바운스를 적용
@@ -143,7 +144,7 @@ const MainPage = () => {
 
   const fetchMovies = async (query) => {
     try {
-      setLoading(true);
+      setIsLoading(true);
       const response = await fetch(
         `https://api.themoviedb.org/3/search/movie?include_adult=false&language=en-US&page=1&query=${query}`,
         {
@@ -155,12 +156,16 @@ const MainPage = () => {
           },
         }
       );
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
       const data = await response.json();
       setSearchMovies(data.results || []);
-      setLoading(false);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching data: ", error);
-      setLoading(false);
+      setError(error.message);
+      setIsLoading(false);
     }
   };
   return (
@@ -180,11 +185,15 @@ const MainPage = () => {
         </SearchBox>
         <SearchContainer>
           <Row>
-            {loading ? (
-              <LoadingSpinner />
+            {isLoading ? (
+              <div>데이터를 받아오는 중 입니다...</div>
+            ) : error ? (
+              <div>Failed to fetch data. Please try again later.</div>
+            ) : searchMovies.length === 0 ? (
+              <div>No movies found.</div>
             ) : (
               searchMovies.map((movie) => (
-                <Box key={movie.id} to={`/search/movie/${movie.title}`}>
+                <Box key={movie.id} to={`/search/movie/${movie.id}`}>
                   <Img
                     src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
                     alt="movieimg"

@@ -11,7 +11,7 @@ import TopRatedPage from "./pages/TopRatedPage";
 import UpComing from "./pages/UpComing";
 import MovieDetail from "./pages/MovieDetail";
 import { NotFoundPage } from "./pages/NotFoundPage";
-
+import SearchMovieDetail from "./pages/SearchMovieDetail";
 function App() {
   return (
     <Router>
@@ -27,6 +27,7 @@ function App() {
           <Route path="/toprated" element={<TopRatedPage />} />
           <Route path="/upcoming" element={<UpComing />} />
           <Route path="/:category/movie/:title" element={<MovieDetail />} />
+          <Route path="/search/movie/:id" element={<SearchMovieDetail />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
