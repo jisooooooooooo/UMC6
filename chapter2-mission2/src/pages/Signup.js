@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-
+import { Link } from "react-router-dom";
 const Container = styled.div`
   height: 100vh;
   background-color: #1f1f43;
@@ -44,9 +44,10 @@ const Id = styled.div`
   color: white;
   margin-right: 20px;
 `;
-const Login = styled.div`
+const Login = styled(Link)`
   color: white;
   font-weight: bold;
+  text-decoration: none;
 `;
 const ErrorBox = styled.div`
   text-align: left;
@@ -59,6 +60,7 @@ const ErrorMessage = styled.div`
 `;
 const Signup = () => {
   const [name, setName] = useState("");
+  const [id, setId] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
   const [password, setPassword] = useState("");
@@ -66,6 +68,7 @@ const Signup = () => {
   const [submitEnabled, setSubmitEnabled] = useState(false);
   const [errorMessages, setErrorMessages] = useState({
     name: "",
+    id: "",
     email: "",
     age: "",
     password: "",
@@ -76,6 +79,9 @@ const Signup = () => {
 
     if (!name.trim()) {
       errors.name = "이름을 입력해주세요!";
+    }
+    if (!id.trim()) {
+      errors.id = "아이디를 입력해주세요!";
     }
 
     if (!email.trim() || !email.includes("@")) {
@@ -142,6 +148,15 @@ const Signup = () => {
         />
         <ErrorBox>
           <ErrorMessage>{errorMessages.name}</ErrorMessage>
+        </ErrorBox>
+        <Input
+          type="text"
+          placeholder="아이디를 입력해주세요"
+          value={id}
+          onChange={(e) => handleInputChange(setId, e.target.value)}
+        />
+        <ErrorBox>
+          <ErrorMessage>{errorMessages.id}</ErrorMessage>
         </ErrorBox>
         <Input
           type="email"
