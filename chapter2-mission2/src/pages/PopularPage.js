@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import LoadingSpinner from "../LoadingSpinner";
 import { Link } from "react-router-dom";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+
 const Container = styled.div`
   background-color: #1f1f43;
 `;
@@ -9,6 +11,7 @@ const Row = styled.div`
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 20px;
+  justify-content: space-between;
 `;
 
 const Box = styled(Link)`
@@ -17,7 +20,7 @@ const Box = styled(Link)`
   height: 370px;
   color: white;
   margin: 10px;
-  width: calc(100% / 8 - 20px);
+  width: calc(100% / 4 - 20px);
   text-decoration: none;
   box-sizing: border-box;
   &:hover {
@@ -58,44 +61,84 @@ const Overtitle = styled.div`
   margin-bottom: 10px;
 `;
 
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+`;
+
+const PaginationButton = styled.button`
+  margin: 0 5px;
+  padding: 5px 10px;
+  background-color: ${({ active }) => (active ? "#555" : "#333")};
+  color: white;
+  border: none;
+  cursor: pointer;
+`;
+
+const ArrowButton = styled(PaginationButton)`
+  font-size: 20px;
+`;
+
 const PopularPage = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [cache, setCache] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
-          {
-            method: "GET",
-            headers: {
-              accept: "application/json",
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlNzVlYzI3ZjgzODQwODFhZjVlNGYxYWJhMjcyZGI4OCIsInN1YiI6IjY2MjFkNmQyY2NkZTA0MDE4ODA2NGIwYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.9p6u7J4co7Lgu_v1SGf9S-NAJSPjBsEaCsv9elKP1n0",
-            },
-          }
-        );
-        const data = await response.json();
-        setMovies(data.results || []);
+      if (cache[currentPage]) {
+        setMovies(cache[currentPage]);
         setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-        setLoading(false);
+      } else {
+        try {
+          const response = await fetch(
+            `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${currentPage}`,
+            {
+              method: "GET",
+              headers: {
+                accept: "application/json",
+                Authorization:
+                  "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlNzVlYzI3ZjgzODQwODFhZjVlNGYxYWJhMjcyZGI4OCIsInN1YiI6IjY2MjFkNmQyY2NkZTA0MDE4ODA2NGIwYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.9p6u7J4co7Lgu_v1SGf9S-NAJSPjBsEaCsv9elKP1n0",
+              },
+            }
+          );
+          const data = await response.json();
+          setMovies(data.results || []);
+          setTotalPages(data.total_pages || 1);
+          setLoading(false);
+          setCache((prevCache) => ({
+            ...prevCache,
+            [currentPage]: data.results,
+          }));
+        } catch (error) {
+          console.error("Error fetching data: ", error);
+          setLoading(false);
+        }
       }
     };
     fetchData();
-  }, []);
+  }, [currentPage, cache]);
+
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+  };
 
   return (
     <Container>
       {loading ? (
         <LoadingSpinner />
       ) : (
-        movies
-          .reduce((rows, movie, index) => {
-            if (index % 8 === 0) rows.push([]);
-            rows[rows.length - 1].push(
+        <>
+          <Row>
+            {movies.map((movie) => (
               <Box key={movie.id} to={`/popular/movie/${movie.title}`}>
                 <Img
                   src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
@@ -114,10 +157,21 @@ const PopularPage = () => {
                   </div>
                 </Overlay>
               </Box>
-            );
-            return rows;
-          }, [])
-          .map((row, index) => <Row key={index}>{row}</Row>)
+            ))}
+          </Row>
+          <PaginationContainer>
+            <ArrowButton onClick={handlePrevPage} disabled={currentPage === 1}>
+              <FaArrowLeft />
+            </ArrowButton>
+            <PaginationButton>{currentPage}</PaginationButton>
+            <ArrowButton
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              <FaArrowRight />
+            </ArrowButton>
+          </PaginationContainer>
+        </>
       )}
     </Container>
   );

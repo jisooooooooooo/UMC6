@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import LoadingSpinner from "../LoadingSpinner";
 import { Link } from "react-router-dom";
 
 const Container = styled.div`
   background-color: #1f1f43;
+  padding: 20px;
 `;
+
 const Row = styled.div`
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 20px;
 `;
 
 const Box = styled(Link)`
@@ -18,7 +19,7 @@ const Box = styled(Link)`
   height: 370px;
   color: white;
   margin: 10px;
-  width: calc(100% / 8 - 20px);
+  width: calc(25% - 20px);
   text-decoration: none;
   box-sizing: border-box;
   &:hover {
@@ -62,62 +63,92 @@ const Overtitle = styled.div`
 const NowPlayingPage = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const loader = useRef(null);
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1",
-          {
-            method: "GET",
-            headers: {
-              accept: "application/json",
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlNzVlYzI3ZjgzODQwODFhZjVlNGYxYWJhMjcyZGI4OCIsInN1YiI6IjY2MjFkNmQyY2NkZTA0MDE4ODA2NGIwYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.9p6u7J4co7Lgu_v1SGf9S-NAJSPjBsEaCsv9elKP1n0",
-            },
-          }
-        );
-        const data = await response.json();
-        setMovies(data.results || []);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-        setLoading(false);
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    }, {
+      threshold: 1
+    });
+
+    const currentLoader = loader.current; // Copy loader.current to a variable
+
+    if (currentLoader) {
+      observer.observe(currentLoader);
+    }
+
+    return () => {
+      if (currentLoader) {
+        observer.unobserve(currentLoader);
       }
     };
-    fetchData();
-  }, []);
+  }, [hasMore]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=${page}`,
+        {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlNzVlYzI3ZjgzODQwODFhZjVlNGYxYWJhMjcyZGI4OCIsInN1YiI6IjY2MjFkNmQyY2NkZTA0MDE4ODA2NGIwYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.9p6u7J4co7Lgu_v1SGf9S-NAJSPjBsEaCsv9elKP1n0",
+          },
+        }
+      );
+      const data = await response.json();
+      if (data.results.length === 0) {
+        setHasMore(false);
+      } else {
+        setMovies((prevMovies) => [...prevMovies, ...data.results]);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      setLoading(false);
+    }
+  };
 
   return (
     <Container>
-      {loading ? (
-        <LoadingSpinner /> // 로딩 중일 때 스피너 표시
-      ) : (
-        movies
-          .reduce((rows, movie, index) => {
-            if (index % 8 === 0) rows.push([]);
-            rows[rows.length - 1].push(
-              <Box key={movie.id} to={`/now_playing/movie/${movie.title}`}>
-                <Img
-                  src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
-                  alt="movieimg"
-                />
-                <Bottom>
-                  <div>{movie.title}</div>
-                  <div>⭐ {movie.vote_average}</div>
-                </Bottom>
-                <Overlay>
-                  <Overtitle>{movie.title}</Overtitle>
-                  <div>
-                    {movie.overview.length > 100
-                      ? `${movie.overview.substring(0, 100)}...`
-                      : movie.overview}
-                  </div>
-                </Overlay>
-              </Box>
-            );
-            return rows;
-          }, [])
-          .map((row, index) => <Row key={index}>{row}</Row>)
+      <Row>
+        {movies.map((movie, index) => (
+          <Box key={index} to={`/now_playing/movie/${movie.title}`}>
+            <Img
+              src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+              alt="movieimg"
+            />
+            <Bottom>
+              <div>{movie.title}</div>
+              <div>⭐ {movie.vote_average}</div>
+            </Bottom>
+            <Overlay>
+              <Overtitle>{movie.title}</Overtitle>
+              <div>
+                {movie.overview.length > 100
+                  ? `${movie.overview.substring(0, 100)}...`
+                  : movie.overview}
+              </div>
+            </Overlay>
+          </Box>
+        ))}
+      </Row>
+      {loading && <LoadingSpinner />}
+      {!loading && hasMore && (
+        <div ref={loader}>
+          <LoadingSpinner />
+        </div>
       )}
     </Container>
   );

@@ -9,7 +9,6 @@ const Container = styled.div`
 const Row = styled.div`
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 20px;
 `;
 
 const Box = styled(Link)`
