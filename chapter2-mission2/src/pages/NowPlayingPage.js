@@ -19,9 +19,15 @@ const Box = styled(Link)`
   height: 370px;
   color: white;
   margin: 10px;
-  width: calc(25% - 20px);
+  width: calc(50% - 20px);
   text-decoration: none;
   box-sizing: border-box;
+  @media (min-width: 600px) {
+    width: calc(33.33% - 20px);
+  }
+  @media (min-width: 900px) {
+    width: calc(25% - 20px);
+  }
   &:hover {
     opacity: 1;
   }
@@ -62,39 +68,19 @@ const Overtitle = styled.div`
 
 const NowPlayingPage = () => {
   const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const loader = useRef(null);
+  const cache = useRef(new Map());
 
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasMore) {
-        setPage((prevPage) => prevPage + 1);
-      }
-    }, {
-      threshold: 1
-    });
-
-    const currentLoader = loader.current; // Copy loader.current to a variable
-
-    if (currentLoader) {
-      observer.observe(currentLoader);
+  const fetchMovies = async (page) => {
+    if (cache.current.has(page)) {
+      setMovies((prevMovies) => [...prevMovies, ...cache.current.get(page)]);
+      return;
     }
 
-    return () => {
-      if (currentLoader) {
-        observer.unobserve(currentLoader);
-      }
-    };
-  }, [hasMore]);
-
-  const fetchData = async () => {
+    setLoading(true);
     try {
       const response = await fetch(
         `https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=${page}`,
@@ -111,20 +97,50 @@ const NowPlayingPage = () => {
       if (data.results.length === 0) {
         setHasMore(false);
       } else {
+        cache.current.set(page, data.results);
         setMovies((prevMovies) => [...prevMovies, ...data.results]);
       }
-      setLoading(false);
     } catch (error) {
-      console.error("Error fetching data: ", error);
-      setLoading(false);
+      console.error("Error fetching data:", error);
     }
+    setLoading(false);
   };
+
+  useEffect(() => {
+    fetchMovies(page);
+  }, [page]);
+
+  useEffect(() => {
+    if (loading) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      {
+        threshold: 1,
+      }
+    );
+
+    const currentLoader = loader.current;
+    if (currentLoader) {
+      observer.observe(currentLoader);
+    }
+
+    return () => {
+      if (currentLoader) {
+        observer.unobserve(currentLoader);
+      }
+    };
+  }, [loading, hasMore]);
 
   return (
     <Container>
       <Row>
         {movies.map((movie, index) => (
-          <Box key={index} to={`/now_playing/movie/${movie.title}`}>
+          <Box key={index} to={`/now_playing/movie/${movie.id}`}>
             <Img
               src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
               alt="movieimg"
@@ -145,11 +161,7 @@ const NowPlayingPage = () => {
         ))}
       </Row>
       {loading && <LoadingSpinner />}
-      {!loading && hasMore && (
-        <div ref={loader}>
-          <LoadingSpinner />
-        </div>
-      )}
+      <div ref={loader} />
     </Container>
   );
 };
