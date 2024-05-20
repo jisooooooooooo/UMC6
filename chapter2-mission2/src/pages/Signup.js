@@ -1,23 +1,27 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+
 const Container = styled.div`
   height: 100vh;
   background-color: #1f1f43;
   display: flex;
   justify-content: center;
 `;
+
 const Title = styled.div`
   font-size: 18px;
   color: white;
   margin-bottom: 30px;
 `;
+
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 30px;
 `;
+
 const Input = styled.input`
   width: 500px;
   height: 40px;
@@ -26,6 +30,7 @@ const Input = styled.input`
   margin-bottom: 15px;
   border-radius: 20px;
 `;
+
 const Button = styled.button`
   width: 500px;
   height: 50px;
@@ -36,28 +41,34 @@ const Button = styled.button`
   margin-top: 40px;
   background-color: ${(props) => (props.enabled ? "#ffd700" : "white")};
 `;
+
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
 `;
+
 const Id = styled.div`
   color: white;
   margin-right: 20px;
 `;
+
 const Login = styled(Link)`
   color: white;
   font-weight: bold;
   text-decoration: none;
 `;
+
 const ErrorBox = styled.div`
   text-align: left;
   width: 500px;
 `;
+
 const ErrorMessage = styled.div`
   color: red;
   font-size: 12px;
   margin-bottom: 15px;
 `;
+
 const Signup = () => {
   const [name, setName] = useState("");
   const [id, setId] = useState("");
@@ -74,12 +85,14 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
+
   const validateInputs = () => {
     const errors = {};
 
     if (!name.trim()) {
       errors.name = "이름을 입력해주세요!";
     }
+
     if (!id.trim()) {
       errors.id = "아이디를 입력해주세요!";
     }
@@ -96,8 +109,6 @@ const Signup = () => {
       errors.age = "나이는 양수여야 합니다!";
     } else if (age < 19) {
       errors.age = "19세 이상만 사용 가능합니다!";
-    } else {
-      errors.age = "";
     }
 
     if (password.length < 4) {
@@ -129,13 +140,48 @@ const Signup = () => {
     setSubmitEnabled(isValid);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("회원가입이 성공적으로 완료되었습니다.");
-    window.location.href = "/login";
 
-    console.log("완료");
+    const errors = validateInputs();
+    if (Object.values(errors).some((error) => error !== "")) {
+      setErrorMessages(errors);
+      return;
+    }
+
+    const requestData = {
+      name,
+      email,
+      age: parseInt(age, 10),
+      username: id,
+      password,
+      passwordCheck: confirmPassword,
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      if (response.status === 201) {
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("username", data.username);
+        alert("회원가입이 성공적으로 완료되었습니다.");
+        window.location.href = "/login";
+      } else {
+        const data = await response.json();
+        setErrorMessages((prev) => ({ ...prev, form: data.message }));
+      }
+    } catch (error) {
+      setErrorMessages((prev) => ({ ...prev, form: "서버 오류가 발생!!!!!!" }));
+    }
   };
+
   return (
     <Container>
       <Form onSubmit={handleSubmit}>
@@ -203,8 +249,14 @@ const Signup = () => {
           <Id>이미 아이디가 있으신가요?</Id>
           <Login to="/login">로그인 페이지로 이동하기</Login>
         </Wrapper>
+        {errorMessages.form && (
+          <ErrorBox>
+            <ErrorMessage>{errorMessages.form}</ErrorMessage>
+          </ErrorBox>
+        )}
       </Form>
     </Container>
   );
 };
+
 export default Signup;

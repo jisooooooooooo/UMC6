@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
 import styled from "styled-components";
 
 const Nav = styled.div`
@@ -11,16 +10,19 @@ const Nav = styled.div`
   justify-content: space-between;
   padding: 0 15px;
 `;
+
 const Title = styled(Link)`
   color: white;
   font-size: 25px;
   font-weight: bold;
   text-decoration: none;
 `;
+
 const NavRight = styled.div`
   display: flex;
   font-size: 18px;
 `;
+
 const NavRightList = styled(Link)`
   margin-left: 20px;
   color: white;
@@ -31,26 +33,47 @@ const NavRightList = styled(Link)`
     font-weight: bold;
   }
 `;
-const NavSignup = styled(Link)`
-  font-size: 20px;
-  color: #ffd700;
-  font-weight: bold;
-  text-decoration: none;
-`;
-const Navbar = () => {
-  // const [isLoggedIn, setLoggedIn] = useState("로그인");
 
-  // const loginHandler = () => {
-  //   setLoggedIn((prev) => !prev);
-  // };
+const NavButton = styled.button`
+  background: none;
+  border: none;
+  color: ${(props) => (props.logout ? "#ffd700" : "white")};
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  &:hover {
+    font-size: 22px;
+    font-weight: bold;
+  }
+`;
+
+const NavLink = styled(Link)`
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  margin-left: 20px;
+  text-decoration: none;
+  &:hover {
+    font-size: 22px;
+    font-weight: bold;
+  }
+`;
+
+const Navbar = ({ isLoggedIn, onLogout }) => {
   return (
     <Nav>
       <Title to="/">UMC Movie</Title>
       <NavRight>
-        {/* <NavSignup to="/signup" onClick={loginHandler}> */}
-          {/* {isLoggedIn ? "로그아웃" : "로그인"} */}
-        {/* </NavSignup> */}
-        <NavSignup to="/signup">회원가입</NavSignup>
+        {isLoggedIn ? (
+          <NavButton logout onClick={onLogout}>
+            로그아웃
+          </NavButton>
+        ) : (
+          <>
+            <NavLink to="/login">로그인</NavLink>
+            <NavLink to="/signup">회원가입</NavLink>
+          </>
+        )}
         <NavRightList to="/popular">Popular</NavRightList>
         <NavRightList to="/nowplaying">Now Playing</NavRightList>
         <NavRightList to="/toprated">Top Rated</NavRightList>
@@ -59,4 +82,5 @@ const Navbar = () => {
     </Nav>
   );
 };
+
 export default Navbar;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
@@ -12,10 +12,10 @@ const Top = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
 const Bottom = styled.div`
   height: 100vh;
   display: flex;
-  /* justify-content: center; */
   flex-direction: column;
   color: white;
   font-size: 30px;
@@ -33,6 +33,7 @@ const BottomInput = styled.input`
   margin-right: 15px;
   padding-left: 15px;
 `;
+
 const Search = styled.div`
   display: flex;
   align-items: center;
@@ -103,11 +104,13 @@ const Overlay = styled.div`
     opacity: 1;
   }
 `;
+
 const SearchContainer = styled.div`
   background-color: #1f1f43;
   display: flex;
   justify-content: center;
 `;
+
 const SearchBox = styled.div`
   display: flex;
   align-items: center;
@@ -121,18 +124,43 @@ const MovieBottom = styled.div`
   justify-content: space-between;
   padding: 10px 10px;
 `;
+
 const Overtitle = styled.div`
   margin-bottom: 10px;
 `;
+
 const MainPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const [searchMovies, setSearchMovies] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [debounceTimer, setDebounceTimer] = useState(null);
+  const [userName, setUserName] = useState("");
 
-  // 디바운스를 적용
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchUserInfo(token);
+    }
+  }, []);
+  const fetchUserInfo = async (token) => {
+    try {
+      const response = await fetch("http://localhost:8080/auth/me", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch user info");
+      }
+      const data = await response.json();
+      setUserName(data.name);
+    } catch (error) {
+      console.error("Error fetching user info: ", error);
+    }
+  };
+
   const searchMoviesHandler = (query) => {
     setSearchTerm(query);
     clearTimeout(debounceTimer);
@@ -168,12 +196,13 @@ const MainPage = () => {
       setIsLoading(false);
     }
   };
+
   return (
     <div>
-      <Top>환영합니다</Top>
+      <Top>{userName ? `${userName}님 환영합니다!` : "환영합니다"}</Top>
       <Bottom>
         <SearchBox>
-          <div>📽️ Find your movies !</div>
+          <div>📽️ Find your movies!</div>
           <Search>
             <BottomInput
               type="text"
@@ -219,4 +248,5 @@ const MainPage = () => {
     </div>
   );
 };
+
 export default MainPage;

@@ -69,7 +69,7 @@ const ErrorMessage = styled.div`
   margin-bottom: 10px;
 `;
 
-const Login = () => {
+const Login = ({ onLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
@@ -97,14 +97,35 @@ const Login = () => {
     setErrors({});
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const errors = validateInputs();
     if (Object.keys(errors).length === 0) {
-      // Proceed with login
-      console.log("로그인 완료");
-      window.location.href = "/";
+      // Assuming your login API returns a token upon successful login
+      try {
+        const response = await fetch("http://localhost:8080/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to login");
+        }
+        const data = await response.json();
+        localStorage.setItem("token", data.token); // Save token to local storage
+        onLogin(data.token); // Pass token to parent component
+        console.log("로그인 완료");
+        window.location.href = "/";
+      } catch (error) {
+        console.error("Error logging in: ", error);
+        setErrors({ login: "로그인에 실패했습니다. 다시 시도해주세요." });
+      }
     } else {
       setErrors(errors);
     }
@@ -131,6 +152,7 @@ const Login = () => {
         />
         <ErrorBox>
           {errors.password && <ErrorMessage>{errors.password}</ErrorMessage>}
+          {errors.login && <ErrorMessage>{errors.login}</ErrorMessage>}
         </ErrorBox>
         <Button type="submit" enabled={!Object.keys(errors).length}>
           로그인
