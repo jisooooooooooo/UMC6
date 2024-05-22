@@ -11,6 +11,13 @@ const Top = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  @media (max-width: 768px) {
+    font-size: 25px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 20px;
+  }
 `;
 
 const Bottom = styled.div`
@@ -22,6 +29,15 @@ const Bottom = styled.div`
   font-weight: bold;
   background-color: #1f1f43;
   padding-top: 30px;
+  @media (max-width: 768px) {
+    font-size: 20px;
+    padding-top: 15px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 18px;
+    padding-top: 10px;
+  }
 `;
 
 const BottomInput = styled.input`
@@ -32,6 +48,15 @@ const BottomInput = styled.input`
   border-radius: 20px;
   margin-right: 15px;
   padding-left: 15px;
+  @media (max-width: 768px) {
+    width: 200px;
+    height: 25px;
+  }
+
+  @media (max-width: 480px) {
+    width: 180px;
+    height: 20px;
+  }
 `;
 
 const Search = styled.div`
@@ -40,6 +65,17 @@ const Search = styled.div`
   margin-top: 40px;
   margin-left: 60px;
   margin-bottom: 40px;
+  @media (max-width: 768px) {
+    margin-top: 20px;
+    margin-left: 30px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 480px) {
+    margin-top: 15px;
+    margin-left: 20px;
+    margin-bottom: 15px;
+  }
 `;
 
 const Row = styled.div`
@@ -79,6 +115,13 @@ const Box = styled(Link)`
   box-sizing: border-box;
   &:hover {
     opacity: 1;
+  }
+  @media (max-width: 768px) {
+    width: calc(100% / 2 - 20px);
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
   }
 `;
 
@@ -123,6 +166,13 @@ const MovieBottom = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 10px 10px;
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
 `;
 
 const Overtitle = styled.div`

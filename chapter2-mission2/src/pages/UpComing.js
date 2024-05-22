@@ -5,11 +5,13 @@ import { Link } from "react-router-dom";
 
 const Container = styled.div`
   background-color: #1f1f43;
+  padding: 0 50px 0 50px;
 `;
 const Row = styled.div`
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 20px;
+  justify-content: center;
 `;
 
 const Box = styled(Link)`
@@ -18,7 +20,7 @@ const Box = styled(Link)`
   height: 370px;
   color: white;
   margin: 10px;
-  width: calc(100% / 8 - 20px);
+  width: 250px;
   text-decoration: none;
   box-sizing: border-box;
   &:hover {

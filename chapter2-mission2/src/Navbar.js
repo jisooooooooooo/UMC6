@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-
+import { FaBars } from "react-icons/fa";
+import Sidebar from "./pages/Sidebar";
 const Nav = styled.div`
   background-color: #171a32;
   height: 50px;
@@ -9,6 +10,7 @@ const Nav = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0 15px;
+  position: relative;
 `;
 
 const Title = styled(Link)`
@@ -21,6 +23,9 @@ const Title = styled(Link)`
 const NavRight = styled.div`
   display: flex;
   font-size: 18px;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const NavRightList = styled(Link)`
@@ -59,27 +64,47 @@ const NavLink = styled(Link)`
   }
 `;
 
+const MenuIcon = styled(FaBars)`
+  display: none;
+  color: white;
+  font-size: 25px;
+  cursor: pointer;
+  @media (max-width: 768px) {
+    display: block;
+  }
+`;
+
 const Navbar = ({ isLoggedIn, onLogout }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <Nav>
-      <Title to="/">UMC Movie</Title>
-      <NavRight>
-        {isLoggedIn ? (
-          <NavButton logout onClick={onLogout}>
-            로그아웃
-          </NavButton>
-        ) : (
-          <>
-            <NavLink to="/login">로그인</NavLink>
-            <NavLink to="/signup">회원가입</NavLink>
-          </>
-        )}
-        <NavRightList to="/popular">Popular</NavRightList>
-        <NavRightList to="/nowplaying">Now Playing</NavRightList>
-        <NavRightList to="/toprated">Top Rated</NavRightList>
-        <NavRightList to="/upcoming">Upcoming</NavRightList>
-      </NavRight>
-    </Nav>
+    <>
+      <Nav>
+        <Title to="/">UMC Movie</Title>
+        <MenuIcon onClick={toggleSidebar} />
+        <NavRight>
+          {isLoggedIn ? (
+            <NavButton logout onClick={onLogout}>
+              로그아웃
+            </NavButton>
+          ) : (
+            <>
+              <NavLink to="/login">로그인</NavLink>
+              <NavLink to="/signup">회원가입</NavLink>
+            </>
+          )}
+          <NavRightList to="/popular">Popular</NavRightList>
+          <NavRightList to="/nowplaying">Now Playing</NavRightList>
+          <NavRightList to="/toprated">Top Rated</NavRightList>
+          <NavRightList to="/upcoming">Upcoming</NavRightList>
+        </NavRight>
+      </Nav>
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} isLoggedIn={isLoggedIn} onLogout={onLogout} />
+    </>
   );
 };
 

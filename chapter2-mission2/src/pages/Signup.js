@@ -10,9 +10,18 @@ const Container = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 18px;
+  font-size: 20px;
   color: white;
   margin-bottom: 30px;
+  @media (max-width: 768px) {
+    font-size: 17px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 15px;
+    margin-bottom: 15px;
+  }
 `;
 
 const Form = styled.form`
@@ -29,6 +38,15 @@ const Input = styled.input`
   border: none;
   margin-bottom: 15px;
   border-radius: 20px;
+  @media (max-width: 768px) {
+    width: 350px;
+    height: 30px;
+  }
+
+  @media (max-width: 480px) {
+    width: 250px;
+    height: 25px;
+  }
 `;
 
 const Button = styled.button`
@@ -40,6 +58,21 @@ const Button = styled.button`
   margin-bottom: 40px;
   margin-top: 40px;
   background-color: ${(props) => (props.enabled ? "#ffd700" : "white")};
+  @media (max-width: 768px) {
+    width: 350px;
+    height: 40px;
+    font-size: 13px;
+    margin-bottom: 30px;
+    margin-top: 30px;
+  }
+
+  @media (max-width: 480px) {
+    width: 280px;
+    height: 35px;
+    font-size: 12px;
+    margin-bottom: 25px;
+    margin-top: 25px;
+  }
 `;
 
 const Wrapper = styled.div`
@@ -50,23 +83,56 @@ const Wrapper = styled.div`
 const Id = styled.div`
   color: white;
   margin-right: 20px;
+  @media (max-width: 768px) {
+    margin-right: 20px;
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    margin-right: 5px;
+    font-size: 12px;
+    
+  }
 `;
 
 const Login = styled(Link)`
   color: white;
   font-weight: bold;
   text-decoration: none;
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 `;
 
 const ErrorBox = styled.div`
   text-align: left;
   width: 500px;
+  @media (max-width: 768px) {
+    width: 340px;
+  }
+
+  @media (max-width: 480px) {
+    width: 250px;
+  }
 `;
 
 const ErrorMessage = styled.div`
   color: red;
   font-size: 12px;
   margin-bottom: 15px;
+  @media (max-width: 768px) {
+    font-size: 11px;
+    margin-bottom: 15px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 10px;
+    margin-bottom: 15px;
+  }
 `;
 
 const Signup = () => {

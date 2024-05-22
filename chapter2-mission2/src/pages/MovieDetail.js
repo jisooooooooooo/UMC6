@@ -13,6 +13,14 @@ const Box = styled.div`
 const MovieImg = styled.img`
   width: 700px;
   height: 500px;
+  @media (max-width: 768px) {
+    width: 600px;
+    height: 400px;
+  }
+  @media (max-width: 480px) {
+    width: 350px;
+    height: 300px;
+  }
 `;
 
 const ContentBox = styled.div`
@@ -22,15 +30,36 @@ const MovieTitle = styled.div`
   font-weight: bold;
   color: white;
   font-size: 30px;
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 20px;
+  }
 `;
 const MovieContent = styled.div`
   color: white;
   margin-top: 20px;
   font-weight: bold;
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
 `;
 const MovieOverview = styled.div`
   color: white;
   margin-top: 20px;
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 `;
 const Star = styled.span`
   color: yellow;
