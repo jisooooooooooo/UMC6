@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { increase, decrease, calculateTotals } from "./cartSlice";
+import { increase, decrease, calculateTotals, fetchCartItems } from "./cartSlice";
 import { ChevronDown, ChevronUp } from "./constants/icons";
 import { openModal } from "./modalSlice";
+import { ClipLoader } from "react-spinners";
 
 const CartContainer = styled.div`
   width: 80%;
@@ -74,14 +75,29 @@ const ClearCartButton = styled.button`
   border-radius: 5px;
 `;
 
+const LoadingContainer = styled.div`
+  text-align: center;
+  margin-top: 20px;
+`;
+
 const CartComponent = () => {
   const dispatch = useDispatch();
   const items = useSelector((state) => state.cart.items);
-  const totalPrice = useSelector((state) => state.cart.totalPrice) || 0; // 변경된 부분
+  const totalPrice = useSelector((state) => state.cart.totalPrice) || 0;
+  const cartStatus = useSelector((state) => state.cart.status);
+  const error = useSelector((state) => state.cart.error);
 
   useEffect(() => {
-    dispatch(calculateTotals());
-  }, [items, dispatch]);
+    if (cartStatus === 'idle') {
+      dispatch(fetchCartItems());
+    }
+  }, [cartStatus, dispatch]);
+
+  useEffect(() => {
+    if (cartStatus === 'succeeded') {
+      dispatch(calculateTotals());
+    }
+  }, [items, cartStatus, dispatch]);
 
   const handleIncrease = (id) => {
     dispatch(increase({ id }));
@@ -97,33 +113,51 @@ const CartComponent = () => {
     dispatch(openModal());
   };
 
+  let content;
+
+  if (cartStatus === 'loading') {
+    content = (
+      <LoadingContainer>
+        <ClipLoader size={50} color={"#123abc"} loading={true} />
+      </LoadingContainer>
+    );
+  } else if (cartStatus === 'succeeded') {
+    content = (
+      <>
+        {items.map((item) => (
+          <CartItem key={item.id}>
+            <ItemInfo>
+              <ItemImage src={item.img} alt={item.title} />
+              <ItemDetails>
+                <ItemTitle>{item.title}</ItemTitle>
+                <ItemSinger>{item.singer}</ItemSinger>
+                <ItemPrice>$ {parseFloat(item.price).toFixed(2)}</ItemPrice>
+              </ItemDetails>
+            </ItemInfo>
+            <div>
+              <ItemIncrease onClick={() => handleIncrease(item.id)}>
+                <ChevronUp />
+              </ItemIncrease>
+              <Amount>{item.amount}</Amount>
+              <ItemIncrease onClick={() => handleDecrease(item.id)}>
+                <ChevronDown />
+              </ItemIncrease>
+            </div>
+          </CartItem>
+        ))}
+        <TotalPrice>총 가격 $ {totalPrice.toFixed(2)}</TotalPrice>
+        <ClearCartButton onClick={handleOpenModal}>
+          장바구니 초기화
+        </ClearCartButton>
+      </>
+    );
+  } else if (cartStatus === 'failed') {
+    content = <div>{error}</div>;
+  }
+
   return (
     <CartContainer>
-      {items.map((item) => (
-        <CartItem key={item.id}>
-          <ItemInfo>
-            <ItemImage src={item.img} alt={item.title} />
-            <ItemDetails>
-              <ItemTitle>{item.title}</ItemTitle>
-              <ItemSinger>{item.singer}</ItemSinger>
-              <ItemPrice>$ {parseFloat(item.price).toFixed(2)}</ItemPrice>
-            </ItemDetails>
-          </ItemInfo>
-          <div>
-            <ItemIncrease onClick={() => handleIncrease(item.id)}>
-              <ChevronUp />
-            </ItemIncrease>
-            <Amount>{item.amount}</Amount>
-            <ItemIncrease onClick={() => handleDecrease(item.id)}>
-              <ChevronDown />
-            </ItemIncrease>
-          </div>
-        </CartItem>
-      ))}
-      <TotalPrice>총 가격 $ {totalPrice.toFixed(2)}</TotalPrice>
-      <ClearCartButton onClick={handleOpenModal}>
-        장바구니 초기화
-      </ClearCartButton>
+      {content}
     </CartContainer>
   );
 };
